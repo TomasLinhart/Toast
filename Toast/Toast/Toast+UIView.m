@@ -260,8 +260,18 @@ static const NSString *CSToastActivityViewKey = @"CSToastActivityViewKey";
 
         // size the title label according to the length of the text
         CGSize maxSizeTitle = CGSizeMake((self.bounds.size.width * CSToastMaxWidth) - imageWidth, self.bounds.size.height * CSToastMaxHeight);
-        CGSize expectedSizeTitle = [title sizeWithFont:titleLabel.font constrainedToSize:maxSizeTitle lineBreakMode:titleLabel.lineBreakMode];
-        titleLabel.frame = CGRectMake(0.0, 0.0, expectedSizeTitle.width, expectedSizeTitle.height);
+
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        paragraphStyle.lineBreakMode = titleLabel.lineBreakMode;
+
+        CGRect textRect = [message boundingRectWithSize:maxSizeTitle
+                                              options:NSStringDrawingUsesLineFragmentOrigin
+                                           attributes:@{
+                                                   NSFontAttributeName : titleLabel.font,
+                                                   NSParagraphStyleAttributeName : paragraphStyle
+                                           }
+                                              context:nil];
+        titleLabel.frame = textRect;
     }
 
     if (message != nil) {
@@ -276,8 +286,17 @@ static const NSString *CSToastActivityViewKey = @"CSToastActivityViewKey";
 
         // size the message label according to the length of the text
         CGSize maxSizeMessage = CGSizeMake((self.bounds.size.width * CSToastMaxWidth) - imageWidth, self.bounds.size.height * CSToastMaxHeight);
-        CGSize expectedSizeMessage = [message sizeWithFont:messageLabel.font constrainedToSize:maxSizeMessage lineBreakMode:messageLabel.lineBreakMode];
-        messageLabel.frame = CGRectMake(0.0, 0.0, expectedSizeMessage.width, expectedSizeMessage.height);
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        paragraphStyle.lineBreakMode = messageLabel.lineBreakMode;
+
+        CGRect textRect = [message boundingRectWithSize:maxSizeMessage
+                                                options:NSStringDrawingUsesLineFragmentOrigin
+                                             attributes:@{
+                                                     NSFontAttributeName : messageLabel.font,
+                                                     NSParagraphStyleAttributeName : paragraphStyle
+                                             }
+                                                context:nil];
+        messageLabel.frame = textRect;
     }
 
     // titleLabel frame values
